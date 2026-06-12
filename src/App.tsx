@@ -27,7 +27,7 @@ import VideoPlayer from './components/VideoPlayer';
 import ManageAccountModal from './components/ManageAccountModal';
 
 // Icons
-import { Loader2, Film, ShieldAlert, CheckCircle2, Tv, Play, ChevronRight, HelpCircle, Plus, Minus, ChevronDown, ChevronUp, Globe, X } from 'lucide-react';
+import { Loader2, Film, ShieldAlert, CheckCircle2, Tv, Play, ChevronRight, HelpCircle, Plus, Minus, ChevronDown, ChevronUp, Globe, X, Smartphone, Sparkles, Smile, ArrowDownCircle } from 'lucide-react';
 
 export default function App() {
   // Authentication & Session
@@ -400,31 +400,66 @@ export default function App() {
           </div>
         ) : (
           /* --- STATE 2: HIGH-FIDELITY NETFLIX LANDING PAGE --- */
-          <div className="w-full">
+          <div className="w-full relative">
             
-            {/* HERO HERO CONTAINER BLOCK */}
+            {/* HERO HERO CONTAINER BLOCK WITH SLANTED BACKGROUND GRID */}
             <div 
-              className="relative w-full h-[650px] md:h-[730px] border-b-8 border-[#232323]"
-              style={{
-                backgroundImage: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.9) 100%), url("https://images.unsplash.com/photo-1574375927938-d5a98e8edd85?w=1600&auto=format&fit=crop")',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-              }}
+              className="relative w-full min-h-[660px] md:min-h-[760px] border-b-8 border-[#232323] flex flex-col justify-between overflow-hidden"
             >
+              {/* Slanted Background Grid mirroring Netflix.com design */}
+              <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+                <div 
+                  className="w-[150%] h-[150%] -translate-x-[15%] -translate-y-[20%] grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-4 transform rotate-12 opacity-40 select-none"
+                >
+                  {Array.from({ length: 48 }).map((_, i) => (
+                    <div 
+                      key={i} 
+                      className="aspect-[2/3] w-full bg-neutral-900 rounded-md overflow-hidden border border-neutral-800 shadow-md"
+                    >
+                      <img 
+                        src={`https://images.unsplash.com/photo-${[
+                          '1618005182384-a83a8bd57fbe',
+                          '1574375927938-d5a98e8edd85',
+                          '1536440136628-849c177e76a1',
+                          '1489599849927-2ee91cede3ba',
+                          '1517604931442-7e0c8ed2963c',
+                          '1542204172-e7052809a920',
+                          '1594909122845-11baa439b7bf',
+                          '1585647347483-22b66260dffd',
+                          '1598897135837-143953defdb5',
+                          '1509198397868-475647b2a1e5',
+                          '1535016120720-40c646be5580',
+                          '1568832359672-e36cf5d74f54'
+                        ][i % 12]}?w=350&auto=format&fit=crop`}
+                        alt="poster background card"
+                        className="w-full h-full object-cover grayscale brightness-[0.7] focus:outline-none"
+                        referrerPolicy="no-referrer"
+                      />
+                    </div>
+                  ))}
+                </div>
+                {/* Dark Vignette radial and linear gradient overlay */}
+                <div 
+                  className="absolute inset-0 z-10"
+                  style={{
+                    backgroundImage: 'radial-gradient(circle at center, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.85) 65%, rgba(0,0,0,0.98) 100%), linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.9) 100%)'
+                  }}
+                />
+              </div>
               
               {/* Header Floating Segment */}
-              <header className="px-6 md:px-24 py-6 flex items-center justify-between max-w-7xl mx-auto">
-                <h1 className="text-[#E50914] font-black text-3xl md:text-5.5xl tracking-tighter select-none font-sans filter drop-shadow">
+              <header className="px-6 md:px-24 py-6 flex items-center justify-between max-w-7xl w-full mx-auto z-20">
+                <h1 className="text-[#E50914] font-black text-3xl md:text-5xl tracking-tighter select-none font-sans filter drop-shadow">
                   NETFLIX
                 </h1>
                 
                 <div className="flex items-center gap-4">
-                  <div className="relative hidden sm:block">
+                  <div className="relative">
                     <select className="bg-black/60 border border-neutral-600 rounded text-xs px-8 py-1.5 font-medium text-white appearance-none cursor-pointer focus:outline-none focus:border-white">
                       <option>English</option>
                       <option>Hindi</option>
                     </select>
-                    <Globe className="w-3.5 h-3.5 text-neutral-300 absolute left-2.5 top-2.5" />
+                    <Globe className="w-3.5 h-3.5 text-neutral-300 absolute left-2.5 top-2" />
                   </div>
                   
                   <button
@@ -438,7 +473,7 @@ export default function App() {
               </header>
 
               {/* Main Landing Copy Content */}
-              <div className="h-full flex flex-col justify-center items-center text-center px-4 max-w-4xl mx-auto -mt-16 md:-mt-24 space-y-5">
+              <div className="flex-1 flex flex-col justify-center items-center text-center px-4 max-w-4xl mx-auto z-20 pt-12 pb-16 space-y-5">
                 
                 {authError && (
                   <div className="bg-red-950/70 border border-red-500/50 text-red-200 text-xs md:text-sm px-4 py-3 rounded-md max-w-md mx-auto flex items-center gap-2">
@@ -448,18 +483,18 @@ export default function App() {
                 )}
 
                 <div className="space-y-4">
-                  <h2 className="text-3xl md:text-5.5xl font-extrabold tracking-tight leading-tight md:leading-none text-white max-w-4xl text-center">
+                  <h2 className="text-4xl md:text-6xl font-black tracking-tight leading-tight md:leading-none text-white max-w-4xl text-center">
                     Unlimited movies, TV shows, and more
                   </h2>
-                  <p className="text-lg md:text-2xl font-medium text-neutral-200">
-                    Starts at $6.99. Cancel anytime.
+                  <p className="text-lg md:text-2xl font-bold text-white">
+                    Starts at ₹149. Cancel at any time.
                   </p>
                   <p className="text-sm md:text-lg text-neutral-300 max-w-2xl mx-auto">
                     Ready to watch? Enter your email to create or restart your membership.
                   </p>
                 </div>
 
-                {/* Simulated Lead Form */}
+                {/* Lead Form */}
                 <form 
                   onSubmit={handleGetStarted} 
                   className="w-full max-w-[650px] flex flex-col sm:flex-row gap-2 mt-4"
@@ -469,7 +504,7 @@ export default function App() {
                     placeholder="Email address"
                     value={emailInput}
                     onChange={(e) => setEmailInput(e.target.value)}
-                    className="flex-1 bg-black/65 border border-neutral-600 focus:border-white focus:outline-none rounded text-white px-5 py-4 text-base transition-colors"
+                    className="flex-1 bg-black/40 border border-neutral-600 focus:border-white focus:outline-none rounded text-white px-5 py-4 text-base transition-colors"
                     required
                   />
                   <button
@@ -477,116 +512,191 @@ export default function App() {
                     className="bg-[#E50914] hover:bg-[#C11119] text-white font-bold text-lg md:text-2xl px-6 md:px-8 py-3.5 rounded flex items-center justify-center gap-1 transition-all cursor-pointer active:scale-[0.98]"
                   >
                     Get Started
-                    <ChevronRight className="w-6 h-6" />
+                    <ChevronRight className="w-6 h-6 shrink-0" />
                   </button>
                 </form>
 
               </div>
+
+              {/* Arc Divider Overlay shadow */}
+              <div className="w-full h-8 bg-gradient-to-t from-black to-transparent z-20"></div>
             </div>
 
-            {/* GRID OF ALTERNATING SHOWCASE ROWS */}
-            <div className="w-full">
-              
-              {/* Feature Box 1 */}
-              <div className="w-full bg-black py-16 md:py-20 border-b-8 border-[#232323]">
-                <div className="max-w-6xl mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-12">
-                  <div className="flex-1 text-center md:text-left space-y-4">
-                    <h3 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">Enjoy on your TV</h3>
-                    <p className="text-base md:text-2xl text-neutral-300 leading-relaxed font-normal">
-                      Watch on Smart TVs, Playstation, Xbox, Apple TV, Chromecast, Blu-ray players, and more.
-                    </p>
-                  </div>
-                  <div className="flex-1 relative flex justify-center">
-                    <div className="relative max-w-[480px]">
-                      {/* Styled High quality screen overlay mock */}
-                      <img 
-                        src="https://images.unsplash.com/photo-1593305841991-05c297ba4575?w=500&auto=format&fit=crop" 
-                        alt="Tv display"
-                        className="rounded border border-neutral-800 shadow-2xl relative z-10"
-                        referrerPolicy="no-referrer"
-                      />
-                      <div className="absolute top-[8%] left-[13%] w-[74%] h-[56%] bg-red-600/10 blur-xl animate-pulse"></div>
+            {/* NEW ADDITION: SECTION: TRENDING NOW (Based on Screenshot 2) */}
+            <div className="w-full bg-black py-12 border-b-8 border-[#232323]">
+              <div className="max-w-7xl mx-auto px-6 md:px-24">
+                
+                {/* Title & Dropdowns segment */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                  <h3 className="text-2xl md:text-3xl font-black text-white tracking-tight">
+                    Trending Now
+                  </h3>
+                  
+                  <div className="flex items-center gap-3">
+                    <div className="relative">
+                      <select className="bg-neutral-900 border border-neutral-700 text-white rounded px-4 py-1.5 pr-8 text-xs font-semibold appearance-none cursor-pointer focus:outline-none">
+                        <option>India</option>
+                        <option>Global</option>
+                      </select>
+                      <ChevronDown className="w-3.5 h-3.5 text-neutral-400 absolute right-2.5 top-2 pointer-events-none" />
+                    </div>
+
+                    <div className="relative">
+                      <select className="bg-neutral-900 border border-neutral-700 text-white rounded px-4 py-1.5 pr-8 text-xs font-semibold appearance-none cursor-pointer focus:outline-none">
+                        <option>Movies</option>
+                        <option>TV Shows</option>
+                      </select>
+                      <ChevronDown className="w-3.5 h-3.5 text-neutral-400 absolute right-2.5 top-2 pointer-events-none" />
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Feature Box 2 */}
-              <div className="w-full bg-black py-16 md:py-20 border-b-8 border-[#232323]">
-                <div className="max-w-6xl mx-auto px-6 md:px-12 flex flex-col-reverse md:flex-row items-center justify-between gap-12">
-                  <div className="flex-1 relative flex justify-center">
-                    <div className="relative max-w-[360px] bg-neutral-900 rounded-xl p-4 border border-neutral-850 shadow-2xl">
-                      <img 
-                        src="https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=500&auto=format&fit=crop" 
-                        alt="Stranger Things Poster"
-                        className="rounded h-[220px] w-full object-cover"
-                        referrerPolicy="no-referrer"
-                      />
-                      <div className="mt-3.5 flex items-center justify-between px-2 bg-black/80 py-2 border border-neutral-800 rounded">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-11 bg-red-800 rounded"></div>
-                          <div>
-                            <p className="text-xs font-bold text-white leading-tight">Stranger Things</p>
-                            <p className="text-[10px] text-blue-500">Downloading...</p>
-                          </div>
+                {/* Row of Horizontal Cards with Outline Rank Overlays */}
+                <div className="overflow-x-auto scrollbar-hide flex gap-12 py-4 pl-6 select-none cursor-grab active:cursor-grabbing pb-8">
+                  {[
+                    {
+                      rank: 1,
+                      title: "Maa Behen",
+                      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=500&auto=format&fit=crop"
+                    },
+                    {
+                      rank: 2,
+                      title: "Teach You A Lesson",
+                      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=500&auto=format&fit=crop"
+                    },
+                    {
+                      rank: 3,
+                      title: "Kara",
+                      image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=500&auto=format&fit=crop"
+                    },
+                    {
+                      rank: 4,
+                      title: "Dhurandhar",
+                      image: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=500&auto=format&fit=crop"
+                    },
+                    {
+                      rank: 5,
+                      title: "Hawaii Five-O",
+                      image: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=500&auto=format&fit=crop"
+                    },
+                    {
+                      rank: 6,
+                      title: "Berlin Connection",
+                      image: "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=500&auto=format&fit=crop"
+                    }
+                  ].map((movie) => (
+                    <div 
+                      key={movie.rank} 
+                      onClick={() => setShowSignInCard(true)}
+                      className="relative shrink-0 w-[140px] md:w-[170px] aspect-[2/3] group cursor-pointer animate-fade-in"
+                    >
+                      {/* Image Thumbnail */}
+                      <div className="w-full h-full rounded-lg overflow-hidden border border-neutral-800 shadow-xl transform transition-all duration-300 group-hover:scale-105 group-hover:border-neutral-500">
+                        <img 
+                          src={movie.image} 
+                          alt={movie.title}
+                          className="w-full h-full object-cover"
+                          referrerPolicy="no-referrer"
+                        />
+                        {/* Red Netflix-style ribbon overlay */}
+                        <div className="absolute top-2 left-2 bg-[#E50914] text-[8px] font-black uppercase px-1.5 py-0.5 rounded tracking-tighter">
+                          N
                         </div>
-                        <div className="w-6 h-6 border-2 border-green-500 rounded-full border-t-transparent animate-spin"></div>
                       </div>
+
+                      {/* Rank Number Overlay */}
+                      <span 
+                        className="absolute -left-8 -bottom-5 text-[110px] md:text-[150px] font-black leading-none pointer-events-none select-none tracking-tighter"
+                        style={{
+                          WebkitTextStroke: '4px rgba(130, 130, 130, 0.85)',
+                          color: '#000000',
+                          fontWeight: 900,
+                          lineHeight: 1,
+                        }}
+                      >
+                        {movie.rank}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+              </div>
+            </div>
+
+            {/* NEW ADDITION: SECTION: MORE REASONS TO JOIN (Based on Screenshot 2) */}
+            <div className="w-full bg-black py-16 border-b-8 border-[#232323]">
+              <div className="max-w-7xl mx-auto px-6 md:px-24">
+                
+                <h3 className="text-2xl md:text-3xl font-black text-white tracking-tight mb-8">
+                  More reasons to join
+                </h3>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  
+                  {/* Card 1 */}
+                  <div className="relative rounded-2xl p-6 min-h-[220px] flex flex-col justify-between overflow-hidden bg-gradient-to-br from-[#101323] via-[#141a36] to-[#120F1D] border border-neutral-900 shadow">
+                    <div>
+                      <h4 className="text-xl md:text-2xl font-black text-white tracking-tight">
+                        Enjoy on your TV
+                      </h4>
+                      <p className="text-sm text-neutral-400 mt-2 leading-relaxed">
+                        Watch on smart TVs, PlayStation, Xbox, Chromecast, Apple TV, Blu-ray players and more.
+                      </p>
+                    </div>
+                    {/* Artistic neon-tv icon container */}
+                    <div className="absolute bottom-4 right-4 bg-gradient-to-br from-pink-500/20 to-purple-500/20 p-3 rounded-full border border-pink-500/30 flex items-center justify-center">
+                      <Tv className="w-6 h-6 text-pink-400" />
                     </div>
                   </div>
-                  <div className="flex-1 text-center md:text-left space-y-4">
-                    <h3 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">Download your shows to watch offline</h3>
-                    <p className="text-base md:text-2xl text-neutral-300 leading-relaxed font-normal">
-                      Save your favorites easily and always have something to watch.
-                    </p>
-                  </div>
-                </div>
-              </div>
 
-              {/* Feature Box 3 */}
-              <div className="w-full bg-black py-16 md:py-20 border-b-8 border-[#232323]">
-                <div className="max-w-6xl mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-12">
-                  <div className="flex-1 text-center md:text-left space-y-4">
-                    <h3 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">Watch everywhere</h3>
-                    <p className="text-base md:text-2xl text-neutral-300 leading-relaxed font-normal">
-                      Stream unlimited movies and TV shows on your phone, tablet, laptop, and TV.
-                    </p>
-                  </div>
-                  <div className="flex-1 relative flex justify-center">
-                    <div className="relative max-w-[480px]">
-                      <img 
-                        src="https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=500&auto=format&fit=crop" 
-                        alt="Device compilation"
-                        className="rounded border border-neutral-850 shadow-2xl relative z-10"
-                        referrerPolicy="no-referrer"
-                      />
+                  {/* Card 2 */}
+                  <div className="relative rounded-2xl p-6 min-h-[220px] flex flex-col justify-between overflow-hidden bg-gradient-to-br from-[#101323] via-[#141a36] to-[#120F1D] border border-neutral-900 shadow">
+                    <div>
+                      <h4 className="text-xl md:text-2xl font-black text-white tracking-tight">
+                        Download shows
+                      </h4>
+                      <p className="text-sm text-neutral-400 mt-2 leading-relaxed">
+                        Save your favourites easily and always have something to watch offline.
+                      </p>
+                    </div>
+                    <div className="absolute bottom-4 right-4 bg-gradient-to-br from-blue-500/20 to-indigo-500/20 p-3 rounded-full border border-blue-500/30 flex items-center justify-center">
+                      <ArrowDownCircle className="w-6 h-6 text-blue-400" />
                     </div>
                   </div>
-                </div>
-              </div>
 
-              {/* Feature Box 4 */}
-              <div className="w-full bg-black py-16 md:py-20 border-b-8 border-[#232323]">
-                <div className="max-w-6xl mx-auto px-6 md:px-12 flex flex-col-reverse md:flex-row items-center justify-between gap-12">
-                  <div className="flex-1 relative flex justify-center">
-                    <div className="relative max-w-[400px] text-center space-y-4 bg-gradient-to-tr from-purple-950/20 to-blue-950/20 p-8 rounded-2xl border border-neutral-850 shadow-lg">
-                      <div className="flex gap-4 justify-center">
-                        <div className="w-20 h-20 rounded-lg bg-[#E50914] flex items-center justify-center font-bold text-3xl shadow">Kids</div>
-                        <div className="w-20 h-20 rounded-lg bg-[#3F51B5] flex items-center justify-center font-bold text-3xl shadow opacity-70">Fun</div>
-                        <div className="w-20 h-20 rounded-lg bg-[#4CAF50] flex items-center justify-center font-bold text-3xl shadow opacity-40">Play</div>
-                      </div>
-                      <p className="text-xs text-neutral-400 font-mono">Profile Control Panel Mockups</p>
+                  {/* Card 3 */}
+                  <div className="relative rounded-2xl p-6 min-h-[220px] flex flex-col justify-between overflow-hidden bg-gradient-to-br from-[#101323] via-[#141a36] to-[#120F1D] border border-neutral-900 shadow">
+                    <div>
+                      <h4 className="text-xl md:text-2xl font-black text-white tracking-tight">
+                        Watch everywhere
+                      </h4>
+                      <p className="text-sm text-neutral-400 mt-2 leading-relaxed">
+                        Stream unlimited movies and TV shows on your phone, tablet, laptop, and TV.
+                      </p>
+                    </div>
+                    <div className="absolute bottom-4 right-4 bg-gradient-to-br from-purple-500/20 to-fuchsia-500/20 p-3 rounded-full border border-purple-500/30 flex items-center justify-center">
+                      <Sparkles className="w-6 h-6 text-purple-400" />
                     </div>
                   </div>
-                  <div className="flex-1 text-center md:text-left space-y-4">
-                    <h3 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">Create profiles for kids</h3>
-                    <p className="text-base md:text-2xl text-neutral-300 leading-relaxed font-normal">
-                      Send kids on adventures with their favorite characters in a space made just for them—free with your membership.
-                    </p>
-                  </div>
-                </div>
-              </div>
 
+                  {/* Card 4 */}
+                  <div className="relative rounded-2xl p-6 min-h-[220px] flex flex-col justify-between overflow-hidden bg-gradient-to-br from-[#101323] via-[#141a36] to-[#120F1D] border border-neutral-900 shadow">
+                    <div>
+                      <h4 className="text-xl md:text-2xl font-black text-white tracking-tight">
+                        Profiles for kids
+                      </h4>
+                      <p className="text-sm text-neutral-400 mt-2 leading-relaxed">
+                        Send kids on adventures with their favourite characters in a space made just for them—free.
+                      </p>
+                    </div>
+                    <div className="absolute bottom-4 right-4 bg-gradient-to-br from-orange-500/20 to-red-500/20 p-3 rounded-full border border-orange-500/30 flex items-center justify-center">
+                      <Smile className="w-6 h-6 text-orange-400" />
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
             </div>
 
             {/* FREQUENTLY ASKED QUESTIONS (ACCORDION SECTION) */}
