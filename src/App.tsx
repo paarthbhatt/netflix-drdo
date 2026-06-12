@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   signInWithPopup, 
   GoogleAuthProvider, 
@@ -29,7 +29,7 @@ import VideoPlayer from './components/VideoPlayer';
 import ManageAccountModal from './components/ManageAccountModal';
 
 // Icons
-import { Loader2, Film, ShieldAlert, CheckCircle2, Tv, Play, ChevronRight, HelpCircle, Plus, Minus, ChevronDown, ChevronUp, Globe, X, Smartphone, Sparkles, Smile, ArrowDownCircle } from 'lucide-react';
+import { Loader2, Film, ShieldAlert, CheckCircle2, Tv, Play, ChevronLeft, ChevronRight, HelpCircle, Plus, Minus, ChevronDown, ChevronUp, Globe, X, Smartphone, Sparkles, Smile, ArrowDownCircle } from 'lucide-react';
 
 export default function App() {
   // Authentication & Session
@@ -40,6 +40,9 @@ export default function App() {
   // Domain states
   const [userAccount, setUserAccount] = useState<UserAccount | null>(null);
   const [activeProfile, setActiveProfile] = useState<ViewerProfile | null>(null);
+
+  // Ref for landing page Trending Now row scrolling
+  const trendingRowRef = useRef<HTMLDivElement>(null);
 
   // Home stream navigation and filters
   const [activeTab, setActiveTab] = useState<'home' | 'watchlist' | 'kids'>('home');
@@ -459,50 +462,15 @@ export default function App() {
           /* --- STATE 2: HIGH-FIDELITY NETFLIX LANDING PAGE --- */
           <div className="w-full relative">
             
-            {/* HERO HERO CONTAINER BLOCK WITH SLANTED BACKGROUND GRID */}
+            {/* HERO HERO CONTAINER BLOCK WITH HIGH-RESOLUTION COLLAGE BACKGROUND */}
             <div 
               className="relative w-full min-h-[660px] md:min-h-[760px] border-b-8 border-[#232323] flex flex-col justify-between overflow-hidden"
+              style={{
+                backgroundImage: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.9) 100%), url("/src/assets/images/netflix_collage_bg_1781265016732.jpg")',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
             >
-              {/* Slanted Background Grid mirroring Netflix.com design */}
-              <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-                <div 
-                  className="w-[150%] h-[150%] -translate-x-[15%] -translate-y-[20%] grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-4 transform rotate-12 opacity-40 select-none"
-                >
-                  {Array.from({ length: 48 }).map((_, i) => (
-                    <div 
-                      key={i} 
-                      className="aspect-[2/3] w-full bg-neutral-900 rounded-md overflow-hidden border border-neutral-800 shadow-md"
-                    >
-                      <img 
-                        src={`https://images.unsplash.com/photo-${[
-                          '1618005182384-a83a8bd57fbe',
-                          '1574375927938-d5a98e8edd85',
-                          '1536440136628-849c177e76a1',
-                          '1489599849927-2ee91cede3ba',
-                          '1517604931442-7e0c8ed2963c',
-                          '1542204172-e7052809a920',
-                          '1594909122845-11baa439b7bf',
-                          '1585647347483-22b66260dffd',
-                          '1598897135837-143953defdb5',
-                          '1509198397868-475647b2a1e5',
-                          '1535016120720-40c646be5580',
-                          '1568832359672-e36cf5d74f54'
-                        ][i % 12]}?w=350&auto=format&fit=crop`}
-                        alt="poster background card"
-                        className="w-full h-full object-cover grayscale brightness-[0.7] focus:outline-none"
-                        referrerPolicy="no-referrer"
-                      />
-                    </div>
-                  ))}
-                </div>
-                {/* Dark Vignette radial and linear gradient overlay */}
-                <div 
-                  className="absolute inset-0 z-10"
-                  style={{
-                    backgroundImage: 'radial-gradient(circle at center, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.85) 65%, rgba(0,0,0,0.98) 100%), linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.9) 100%)'
-                  }}
-                />
-              </div>
               
               {/* Header Floating Segment */}
               <header className="px-6 md:px-24 py-6 flex items-center justify-between max-w-7xl w-full mx-auto z-20">
@@ -608,73 +576,116 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Row of Horizontal Cards with Outline Rank Overlays */}
-                <div className="overflow-x-auto scrollbar-hide flex gap-12 py-4 pl-6 select-none cursor-grab active:cursor-grabbing pb-8">
-                  {[
-                    {
-                      rank: 1,
-                      title: "Maa Behen",
-                      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=500&auto=format&fit=crop"
-                    },
-                    {
-                      rank: 2,
-                      title: "Teach You A Lesson",
-                      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=500&auto=format&fit=crop"
-                    },
-                    {
-                      rank: 3,
-                      title: "Kara",
-                      image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=500&auto=format&fit=crop"
-                    },
-                    {
-                      rank: 4,
-                      title: "Dhurandhar",
-                      image: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=500&auto=format&fit=crop"
-                    },
-                    {
-                      rank: 5,
-                      title: "Hawaii Five-O",
-                      image: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=500&auto=format&fit=crop"
-                    },
-                    {
-                      rank: 6,
-                      title: "Berlin Connection",
-                      image: "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=500&auto=format&fit=crop"
-                    }
-                  ].map((movie) => (
-                    <div 
-                      key={movie.rank} 
-                      onClick={() => setShowSignInCard(true)}
-                      className="relative shrink-0 w-[140px] md:w-[170px] aspect-[2/3] group cursor-pointer animate-fade-in"
-                    >
-                      {/* Image Thumbnail */}
-                      <div className="w-full h-full rounded-lg overflow-hidden border border-neutral-800 shadow-xl transform transition-all duration-300 group-hover:scale-105 group-hover:border-neutral-500">
-                        <img 
-                          src={movie.image} 
-                          alt={movie.title}
-                          className="w-full h-full object-cover"
-                          referrerPolicy="no-referrer"
-                        />
-                        {/* Red Netflix-style ribbon overlay */}
-                        <div className="absolute top-2 left-2 bg-[#E50914] text-[8px] font-black uppercase px-1.5 py-0.5 rounded tracking-tighter">
-                          N
-                        </div>
-                      </div>
+                {/* Subcontainer for Slide Controls */}
+                <div className="relative group/trending" id="trending-container-slider">
+                  {/* Left scroll control arrow */}
+                  <button
+                    id="trending-scroll-left"
+                    onClick={() => {
+                      if (trendingRowRef.current) {
+                        const { scrollLeft, clientWidth } = trendingRowRef.current;
+                        trendingRowRef.current.scrollTo({
+                          left: scrollLeft - clientWidth * 0.7,
+                          behavior: 'smooth'
+                        });
+                      }
+                    }}
+                    className="absolute -left-4 md:-left-8 top-1/2 -translate-y-1/2 w-10 h-20 bg-black/60 hover:bg-black/85 hover:scale-105 hover:border-neutral-500 text-white flex items-center justify-center opacity-0 group-hover/trending:opacity-100 z-30 transition-all cursor-pointer border border-neutral-800 rounded shadow-2xl backdrop-blur-xs select-none"
+                    aria-label="Scroll Left"
+                  >
+                    <ChevronLeft className="w-6 h-6 hover:scale-110 transition-transform" />
+                  </button>
 
-                      {/* Rank Number Overlay */}
-                      <span 
-                        className="absolute -left-8 -bottom-5 text-[110px] md:text-[150px] font-black leading-none pointer-events-none select-none tracking-tighter"
-                        style={{
-                          WebkitTextStroke: '4px rgba(130, 130, 130, 0.85)',
-                          color: '#000000',
-                          fontWeight: 900,
-                          lineHeight: 1,
-                        }}
+                  {/* Carousel Tray with Outline Rank Overlays */}
+                  <div
+                    ref={trendingRowRef}
+                    className="overflow-x-hidden scrollbar-none flex gap-12 py-4 pl-12 pr-6 select-none pb-8"
+                  >
+                    {[
+                      {
+                        rank: 1,
+                        title: "Maa Behen",
+                        image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=500&auto=format&fit=crop"
+                      },
+                      {
+                        rank: 2,
+                        title: "Teach You A Lesson",
+                        image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=500&auto=format&fit=crop"
+                      },
+                      {
+                        rank: 3,
+                        title: "Kara",
+                        image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=500&auto=format&fit=crop"
+                      },
+                      {
+                        rank: 4,
+                        title: "Dhurandhar",
+                        image: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=500&auto=format&fit=crop"
+                      },
+                      {
+                        rank: 5,
+                        title: "Hawaii Five-O",
+                        image: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=500&auto=format&fit=crop"
+                      },
+                      {
+                        rank: 6,
+                        title: "Berlin Connection",
+                        image: "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=500&auto=format&fit=crop"
+                      }
+                    ].map((movie) => (
+                      <div 
+                        key={movie.rank} 
+                        onClick={() => setShowSignInCard(true)}
+                        className="relative shrink-0 w-[140px] md:w-[170px] aspect-[2/3] group cursor-pointer animate-fade-in"
+                        id={`trending-movie-${movie.rank}`}
                       >
-                        {movie.rank}
-                      </span>
-                    </div>
-                  ))}
+                        {/* Image Thumbnail */}
+                        <div className="w-full h-full rounded-lg overflow-hidden border border-neutral-800 shadow-xl transform transition-all duration-300 group-hover:scale-105 group-hover:border-neutral-500">
+                          <img 
+                            src={movie.image} 
+                            alt={movie.title}
+                            className="w-full h-full object-cover"
+                            referrerPolicy="no-referrer"
+                          />
+                          {/* Red Netflix-style ribbon overlay */}
+                          <div className="absolute top-2 left-2 bg-[#E50914] text-[8px] font-black uppercase px-1.5 py-0.5 rounded tracking-tighter">
+                            N
+                          </div>
+                        </div>
+
+                        {/* Rank Number Overlay */}
+                        <span 
+                          className="absolute -left-8 -bottom-5 text-[110px] md:text-[150px] font-black leading-none pointer-events-none select-none tracking-tighter"
+                          style={{
+                            WebkitTextStroke: '4px rgba(130, 130, 130, 0.85)',
+                            color: '#000000',
+                            fontWeight: 900,
+                            lineHeight: 1,
+                          }}
+                        >
+                          {movie.rank}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Right scroll control arrow */}
+                  <button
+                    id="trending-scroll-right"
+                    onClick={() => {
+                      if (trendingRowRef.current) {
+                        const { scrollLeft, clientWidth } = trendingRowRef.current;
+                        trendingRowRef.current.scrollTo({
+                          left: scrollLeft + clientWidth * 0.7,
+                          behavior: 'smooth'
+                        });
+                      }
+                    }}
+                    className="absolute -right-4 md:-right-8 top-1/2 -translate-y-1/2 w-10 h-20 bg-black/60 hover:bg-black/85 hover:scale-105 hover:border-neutral-500 text-white flex items-center justify-center opacity-0 group-hover/trending:opacity-100 z-30 transition-all cursor-pointer border border-neutral-800 rounded shadow-2xl backdrop-blur-xs select-none"
+                    aria-label="Scroll Right"
+                  >
+                    <ChevronRight className="w-6 h-6 hover:scale-110 transition-transform" />
+                  </button>
                 </div>
 
               </div>
@@ -934,7 +945,7 @@ export default function App() {
       )}
 
       {/* Lists & Sliders */}
-      <div className={`space-y-12 pb-24 ${searchQuery.trim() === '' && activeTab === 'home' ? '-mt-16 md:-mt-24 relative z-30' : 'pt-24'}`}>
+      <div className={`space-y-12 pb-24 ${searchQuery.trim() === '' && activeTab === 'home' ? '-mt-4 md:-mt-10 relative z-30' : 'pt-24'}`}>
         
         {/* Dynamic header if search/tab active */}
         {searchQuery.trim() !== '' && (

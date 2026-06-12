@@ -10,7 +10,7 @@ interface BillboardProps {
 
 export default function Billboard({ movie, onPlayClick, onInfoClick }: BillboardProps) {
   return (
-    <div className="relative h-[56.25vw] min-h-[400px] max-h-[800px] w-full overflow-hidden select-none" id="billboard-container">
+    <div className="relative h-[56.25vw] min-h-[460px] max-h-[800px] w-full overflow-hidden select-none" id="billboard-container">
       {/* Background backdrop image with side and bottom dark gradients */}
       <img
         src={movie.backdropUrl}
