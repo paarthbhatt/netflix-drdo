@@ -393,3 +393,423 @@ export const movies: Movie[] = [
   }
 ];
 
+// Theme configurations for profile-specific high-resolution imagery and localizations
+const THEMES = {
+  bollywood: {
+    name: "Bollywood & Indian Blockbusters",
+    backdrops: [
+      "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1599661046289-e31897846e41?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1514222134-b57cbb8ce073?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1508193638397-1c4234db14d8?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1506461883276-594a12b11db3?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1566552881560-0be862a7c445?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1594226848121-697960fc5953?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=1200&auto=format&fit=crop"
+    ],
+    thumbnails: [
+      "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1599661046289-e31897846e41?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1514222134-b57cbb8ce073?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1508193638397-1c4234db14d8?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1506461883276-594a12b11db3?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1566552881560-0be862a7c445?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1594226848121-697960fc5953?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=400&auto=format&fit=crop"
+    ],
+    titles: [
+      "RRR: Rise Roar Revolt",
+      "Sacred Games: Mumbai",
+      "Delhi Crime (Award Winner)",
+      "Zindagi Na Milegi Dobara",
+      "Mismatched Chronicles",
+      "Baahubali: Epic Crown",
+      "Guns & Gulaabs Story",
+      "Bhool Bhulaiyaa Part 3",
+      "Dunki: Flight of Hope",
+      "Ludo: Chaotic Destiny",
+      "The Railway Men (2025)",
+      "Monica, O My Darling",
+      "Jaane Jaan (The Alchemist)",
+      "Sardar Udham Singh",
+      "Kathal: Jackfruit Saga",
+      "The Archies: Riverdale India",
+      "Class: High School Lies",
+      "Kho Gaye Hum Kahan",
+      "Yeh Kaali Kaali Ankhein",
+      "Minnal Murali: Lighting Hero",
+      "Fabulous Lives in Mumbai",
+      "Kota Factory (Tech Dream)",
+      "She: Undercover Agent",
+      "Chor Nikal Ke Bhaga"
+    ],
+    genres: ["Bollywood", "Drama", "Action", "Romance"],
+    cast: ["Shah Rukh Khan", "Ranbir Kapoor", "Alia Bhatt", "Deepika Padukone", "Pankaj Tripathi"]
+  },
+  action: {
+    name: "Action Blockbusters & Thrillers",
+    backdrops: [
+      "https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1508614589041-895b88991e3e?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1515162305285-0293e4767cc2?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=1200&auto=format&fit=crop"
+    ],
+    thumbnails: [
+      "https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1508614589041-895b88991e3e?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1515162305285-0293e4767cc2?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=400&auto=format&fit=crop"
+    ],
+    titles: [
+      "The Gray Man: Target Lock",
+      "Extraction 3: Back in Fire",
+      "Six Underground Tactics",
+      "Red Notice: Global Heist-Off",
+      "The Night Agent: Blackline",
+      "Heart of Stone (AI Decrypted)",
+      "The Irishman (Mob Empire)",
+      "FUBAR: Command Action",
+      "Lift: Cargo Crime",
+      "Peaky Blinders: Royal Crown",
+      "Narcos: Medellin Rise",
+      "Berlin: Bank of Spain Vault",
+      "Money Heist: Bella Ciao",
+      "The Mother: Sniper Point",
+      "Bullet Train: High Velocity",
+      "Black Crab: Skate Run",
+      "Top Gun Air Strike",
+      "Luther: Dark Fallen Sun",
+      "The Old Guard: Soldiers",
+      "Spenser Tactical",
+      "Outlaw King: Rebellion Warfare",
+      "Enola Holmes: Case Closed",
+      "Triple Frontier: Gold Loot",
+      "Sicario: Cartel Assassin"
+    ],
+    genres: ["Action", "Thriller", "Suspense", "Crime"],
+    cast: ["Chris Hemsworth", "Ryan Reynolds", "Gal Gadot", "Robert De Niro", "Pedro Pascal"]
+  },
+  adventure: {
+    name: "Adventure & Nature Explorations",
+    backdrops: [
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1473580044384-7ba9967e16a0?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1551244072-5d12893278ab?w=1200&auto=format&fit=crop"
+    ],
+    thumbnails: [
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1473580044384-7ba9967e16a0?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1551244072-5d12893278ab?w=400&auto=format&fit=crop"
+    ],
+    titles: [
+      "Our Planet: Earth Cycles",
+      "Life on Our Planet (Ages)",
+      "David Attenborough Highlights",
+      "Night on Earth (Glowing Nocturnal)",
+      "Chasing Coral Reef Secrets",
+      "My Octopus Teacher: Ocean Love",
+      "The Deepest Breath (Free Dive)",
+      "Expedition Unknown Frontiers",
+      "Formula 1: Drive to Survive",
+      "Free Solo: Peak Climbing",
+      "Mountain High Search Rescue",
+      "Down to Earth: Global Ecology",
+      "Absurd Wildlife Safari",
+      "You vs Wild (Interactive Quest)",
+      "Challenger Shuttle Launch Flight",
+      "Tales by Light: Photo Safari",
+      "Prehistoric Worlds Remastered",
+      "Predators of the Great Savannah",
+      "Deep Blue Ocean Creatures",
+      "African Safari Chronicles",
+      "The Last Dance: MJ Adventure",
+      "Unknown Cosmic Space-Time",
+      "Virunga gorilla wild war",
+      "Elephant Whisperers Sanctuary"
+    ],
+    genres: ["Documentary", "Nature", "Adventure", "Travel"],
+    cast: ["David Attenborough", "Bear Grylls", "Zac Efron", "Sylvia Earle", "Alex Honnold"]
+  },
+  anime: {
+    name: "Anime & Asian Showcases",
+    backdrops: [
+      "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1540959733332-eab4deceeaf7?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1582921017967-79d1cb17e359?w=1200&auto=format&fit=crop"
+    ],
+    thumbnails: [
+      "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1540959733332-eab4deceeaf7?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1582921017967-79d1cb17e359?w=400&auto=format&fit=crop"
+    ],
+    titles: [
+      "Demon Slayer: Mugen Station",
+      "Cyberpunk: Neo-City Run",
+      "Jujutsu Kaisen: Cursed Domain",
+      "Spirited Away: Hidden Worlds",
+      "My Neighbor Totoro: Forest Magic",
+      "Your Name: Cosmic Comet",
+      "Attack on Titan: Final Sieve",
+      "Pluto: Machine Hearts",
+      "Crash Landing on You (South Korea)",
+      "Squid Game: The Green Player",
+      "The Glory (Silent Revenge)",
+      "My Name: Undercover Assassin",
+      "All of Us Are Dead Zombie High",
+      "Vincenzo: Italian Pride",
+      "Alice in Borderland Solitaire",
+      "Sweet Home: Mutant Influx",
+      "Extraordinary Attorney Woo (Seal)",
+      "Castaway Diva: Mic Drop",
+      "Twenty-Five Twenty-One (Fencing)",
+      "Business Proposal: Crazy CEO",
+      "Hellbound: Fire Demons Strike",
+      "Bloodhounds: Boxing Heist",
+      "Parasyte: The Grey Symbiosis",
+      "Kingdom: Ancient Undead Army"
+    ],
+    genres: ["Anime", "East Asian", "Fantasy", "Action"],
+    cast: ["Natsuki Hanae", "Gong Yoo", "Song Hye-kyo", "Aoi Yuki", "Kenjiro Tsuda"]
+  },
+  scifi: {
+    name: "Sci-Fi & Cosmic Realities",
+    backdrops: [
+      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1517976487492-5750f3195933?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1516280440614-37939bbacd6a?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&auto=format&fit=crop"
+    ],
+    thumbnails: [
+      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1517976487492-5750f3195933?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1516280440614-37939bbacd6a?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&auto=format&fit=crop"
+    ],
+    titles: [
+      "Stellar Odyssey Space Mission",
+      "Black Mirror: Cybernetics",
+      "Altered Carbon: Mind Clones",
+      "Love Death & Robots Vol 4",
+      "The 3-Body Problem (Dark Forest)",
+      "DARK: Time Quantum Loops",
+      "Lost in Space: Colony Planet",
+      "Stranger Things: Parallel Abyss",
+      "Spaceman: Inside deep galaxy",
+      "Ex Machina: Cyber Genesis",
+      "Blade Runner: Sector 2049",
+      "Interstellar: Singularity Event",
+      "Dune: Rising Spice Empire",
+      "Inception: Inside Dream Labs",
+      "The Matrix: Machine Override",
+      "Oxygen: Chamber Emergency",
+      "Project Power: High Dose",
+      "Tenet: Reverse Chronology",
+      "Arrival: Decrypting Language",
+      "Annihilation: Pristine Shimmer",
+      "Snowpiercer: Thousand Cars",
+      "Cloverfield Paradox Accelerator",
+      "Sense8: Neural Mindscape Link",
+      "Spider-man: Multiversal Void"
+    ],
+    genres: ["Sci-Fi", "Cyberpunk", "Space", "Tech Thriller"],
+    cast: ["Cillian Murphy", "Timothée Chalamet", "Zendaya", "Rami Malek", "Keanu Reeves"]
+  },
+  romance: {
+    name: "Romantic Dramas & Light Comedy",
+    backdrops: [
+      "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1496337589254-7e19d01cedbb?w=1200&auto=format&fit=crop"
+    ],
+    thumbnails: [
+      "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1496337589254-7e19d01cedbb?w=400&auto=format&fit=crop"
+    ],
+    titles: [
+      "La La Land: Skyline Dreams",
+      "The Notebook: Epilogue",
+      "About Time: Timeless Nights",
+      "Emily in Paris Season 4",
+      "Normal People: Soft Touch",
+      "Before Sunrise: Vienna Walks",
+      "Sweet Magnolias (Comfort Story)",
+      "Virgin River: Scenic Hopes",
+      "Bridgerton: Regency Gossips",
+      "Love Actually: Festive Romance",
+      "A Whisker Away: Whimsical Sky",
+      "Heartstopper: Pride & Art",
+      "Cozy Hearts Cafe Bakery",
+      "Your Place or Mine: Swapped",
+      "Set It Up: Matchmaking Fun",
+      "Through My Window: Barcelona",
+      "Love Is Blind: After Alter Vows",
+      "Too Hot to Handle Edition",
+      "Purple Hearts: Under contract",
+      "Always Be My Maybe: Foodies",
+      "To All the Boys: Sweet Letters",
+      "The Kissing Booth Finale",
+      "Marriage Story (New York)",
+      "Falling Inn Love: Zealand"
+    ],
+    genres: ["Romance", "Comedy", "Feel Good", "Drama"],
+    cast: ["Emma Stone", "Ryan Gosling", "Lily Collins", "Saoirse Ronan", "Paul Mescal"]
+  },
+  kids: {
+    name: "Kids & Animated Fantasy",
+    backdrops: [
+      "https://images.unsplash.com/photo-1507608869274-d3177c8bb4c7?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1558060370-d644479cb6f7?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1519074002996-a69e7ac46a42?w=1200&auto=format&fit=crop"
+    ],
+    thumbnails: [
+      "https://images.unsplash.com/photo-1507608869274-d3177c8bb4c7?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1558060370-d644479cb6f7?w=400&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1519074002996-a69e7ac46a42?w=400&auto=format&fit=crop"
+    ],
+    titles: [
+      "Sea Beast: The Kraken Legend",
+      "Kung Fu Panda: Dragon Warrior",
+      "Moana: Ocean Adventure Ride",
+      "Toy Story: Sheriff Woody Duty",
+      "Frozen Chronicles: Elsa Ice Queen",
+      "COCO: Day of Musical Spirits",
+      "My Neighbor Totoro: Plush Fur",
+      "Despicable Me: Yellow Minions Go",
+      "Inside Out: Emotional Joy Ride",
+      "How To Train Your Dragon Night",
+      "The Grinch: Snow Holiday Fun",
+      "Klaus: Sleigh Post Office",
+      "Leo: The Cute Talking Lizard",
+      "Orion and the Dark: Starry Night",
+      "Sonic the Hedgehog Speed Dash",
+      "The Mitchells vs. Machine Invasion",
+      "Over The Moon: Rocket Jump",
+      "Shaun the Sheep: Farm Fun Riot",
+      "Pinocchio: Magical Wood Crafted",
+      "Del Toro's Wood boy Chronicles",
+      "Pokemon Strike: Mew Battle",
+      "Miraculous Paris Superhero ladybug",
+      "The Boss Baby: Back in Crib",
+      "The Bad Guys: Slick Animal Escape"
+    ],
+    genres: ["Kids", "Animation", "Family Comedy", "Adventures"],
+    cast: ["Tom Hanks", "Jack Black", "Anna Kendrick", "Awkwafina", "Steve Carell"]
+  }
+};
+
+export function getDressedMoviesForProfile(profile: any): Movie[] {
+  if (!profile) return movies;
+
+  // Determine active theme key
+  let themeKey: keyof typeof THEMES = "bollywood";
+
+  if (profile.isKids) {
+    themeKey = "kids";
+  } else {
+    const avatar = (profile.avatar || "").toLowerCase();
+    const name = (profile.name || "").toLowerCase();
+
+    if (avatar.includes("red") || name.includes("india") || name.includes("bollywood") || name.includes("desi") || name.includes("paarth")) {
+      themeKey = "bollywood";
+    } else if (avatar.includes("blue") || name.includes("action") || name.includes("thrill")) {
+      themeKey = "action";
+    } else if (avatar.includes("green") || name.includes("nature") || name.includes("wild") || name.includes("doc")) {
+      themeKey = "adventure";
+    } else if (avatar.includes("yellow") || name.includes("anime") || name.includes("korea") || name.includes("asia")) {
+      themeKey = "anime";
+    } else if (avatar.includes("purple") || name.includes("scifi") || name.includes("cyber") || name.includes("space")) {
+      themeKey = "scifi";
+    } else if (avatar.includes("pink") || name.includes("love") || name.includes("romance") || name.includes("chill") || name.includes("warm")) {
+      themeKey = "romance";
+    } else {
+      // Deterministic hash based on profile id or name
+      let hash = 0;
+      const hashSeed = (profile.id || "") + (profile.name || "");
+      for (let i = 0; i < hashSeed.length; i++) {
+        hash += hashSeed.charCodeAt(i);
+      }
+      const keys: (keyof typeof THEMES)[] = ["bollywood", "action", "adventure", "anime", "scifi", "romance"];
+      themeKey = keys[hash % keys.length];
+    }
+  }
+
+  const selectedTheme = THEMES[themeKey];
+
+  return movies.map((item, idx) => {
+    const imgIdx = idx % selectedTheme.backdrops.length;
+    const backdropUrl = selectedTheme.backdrops[imgIdx];
+    const thumbnailUrl = selectedTheme.thumbnails[imgIdx];
+    const title = selectedTheme.titles[idx] || item.title;
+
+    return {
+      ...item,
+      title,
+      backdropUrl,
+      thumbnailUrl,
+      genres: selectedTheme.genres,
+      cast: selectedTheme.cast,
+      overview: `Featured in your dedicated ${selectedTheme.name} curation. ${item.overview.replace(item.title, title)}`,
+      rating: profile.isKids ? "G" : item.rating,
+      isKids: profile.isKids ? true : item.isKids,
+    };
+  });
+}
+
+

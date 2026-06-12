@@ -4,7 +4,9 @@ import {
   GoogleAuthProvider, 
   onAuthStateChanged, 
   signOut,
-  User as FirebaseUser 
+  User as FirebaseUser,
+  signInWithRedirect,
+  getRedirectResult
 } from 'firebase/auth';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { 
@@ -14,7 +16,7 @@ import {
   OperationType 
 } from './firebase';
 import { UserAccount, ViewerProfile, Movie } from './types';
-import { movies } from './moviesData';
+import { movies, getDressedMoviesForProfile } from './moviesData';
 
 // Subcomponents
 import SubscriptionPaywall from './components/SubscriptionPaywall';
@@ -53,8 +55,50 @@ export default function App() {
   const [faqOpenIndex, setFaqOpenIndex] = useState<number | null>(null);
   const [emailInput, setEmailInput] = useState('');
 
-  // Monitor Google Authentication stream
+  // Comprehensive Auth Error Handler with specific instructions for Vercel & Firebase console setup
+  const handleAuthError = (err: any) => {
+    console.error('Google Auth Failed with error details:', err);
+    const code = err?.code || '';
+    const message = err?.message || '';
+
+    if (code === 'auth/unauthorized-domain') {
+      const currentDomain = window.location.hostname;
+      setAuthError(
+        `Firebase Authorization Error: This domain ("${currentDomain}") is not authorized yet in your Firebase Project.\n\n` +
+        `To fix this, do the following:\n` +
+        `1. Go to your Firebase Console (projectId is "amazing-smile-451706-u9")\n` +
+        `2. Navigate to "Authentication" -> "Settings" -> "Authorized Domains"\n` +
+        `3. Click "Add domain" and type exactly: "${currentDomain}"\n\n` +
+        `Once added, refresh this page. Google sign-in will work perfectly!`
+      );
+    } else if (code === 'auth/popup-blocked') {
+      setAuthError(
+        `Sign-in popup is blocked by your browser.\n\n` +
+        `Please allow popups for this site, or click the "Use Google Redirect" button below to bypass popups (recommended for mobile/embeds!).`
+      );
+    } else if (code === 'auth/operation-not-allowed') {
+      setAuthError(
+        `Google Sign-In is disabled.\n\n` +
+        `Please go to your Firebase Console under Authentication -> "Sign-in method" and enable "Google" as an active provider.`
+      );
+    } else {
+      setAuthError(`Authentication failed: ${message} (Error Code: ${code})`);
+    }
+  };
+
+  // Monitor Google Authentication stream and check redirect login results on mount
   useEffect(() => {
+    // Graceful redirect results parser
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result && result.user) {
+          console.log('Redirect Sign-in successfully recognized: ', result.user);
+        }
+      })
+      .catch((err: any) => {
+        handleAuthError(err);
+      });
+
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       setAuthError('');
@@ -111,8 +155,20 @@ export default function App() {
       provider.setCustomParameters({ prompt: 'select_account' });
       await signInWithPopup(auth, provider);
     } catch (err: any) {
-      console.error('Google Auth Failed: ', err);
-      setAuthError('Authentication failed. Please verify that popup blockers are disabled or open in a new tab.');
+      handleAuthError(err);
+      setIsLoadingSession(false);
+    }
+  };
+
+  const handleGoogleSignInRedirect = async () => {
+    setIsLoadingSession(true);
+    setAuthError('');
+    try {
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
+      await signInWithRedirect(auth, provider);
+    } catch (err: any) {
+      handleAuthError(err);
       setIsLoadingSession(false);
     }
   };
@@ -177,9 +233,11 @@ export default function App() {
 
   // Filter and prioritize movie results matching Active Viewer settings
   const getFilteredMovies = () => {
-    let list = [...movies];
-
     if (!activeProfile) return [];
+    
+    // Get dynamically dressed movie catalog themed to this specific profile (custom images, titles, genres)
+    const dressedMovies = getDressedMoviesForProfile(activeProfile);
+    let list = [...dressedMovies];
 
     // Rule 1: Parental Guidance Guard
     if (activeProfile.isKids) {
@@ -210,6 +268,7 @@ export default function App() {
   };
 
   const filteredMovies = getFilteredMovies();
+  const profileBaseDressedMovies = getDressedMoviesForProfile(activeProfile);
 
   // Categories segments
   const trendingMovies = filteredMovies.filter((m) => m.isTrending);
@@ -220,7 +279,7 @@ export default function App() {
   const romanceMovies = filteredMovies.filter((m) => m.genres.includes('Romance'));
   const fantasyMovies = filteredMovies.filter((m) => m.genres.includes('Fantasy') || m.genres.includes('Adventure'));
 
-  const billboardFeaturedMovie = filteredMovies[0] || movies[0];
+  const billboardFeaturedMovie = filteredMovies[0] || profileBaseDressedMovies[0] || movies[0];
 
   if (isLoadingSession) {
     return (
@@ -302,15 +361,14 @@ export default function App() {
               <div className="bg-black/85 md:bg-black/75 rounded-md px-8 md:px-16 py-12 md:py-16 max-w-[450px] w-full border border-neutral-950 shadow-2xl backdrop-blur-sm">
                 
                 <h2 className="text-3xl font-bold mb-7 text-white tracking-tight">Sign In</h2>
-                
-                {authError && (
-                  <div className="bg-[#E87C03] text-white text-xs md:text-sm px-4 py-3 rounded-md mb-6 flex items-start gap-2.5">
+                             {authError && (
+                  <div className="bg-[#E87C03] text-white text-xs md:text-sm px-4 py-3 rounded-md mb-6 flex items-start gap-2.5 shadow-lg border border-red-500/20">
                     <ShieldAlert className="w-5 h-5 shrink-0 text-white mt-0.5" />
-                    <span className="leading-tight">{authError}</span>
+                    <span className="leading-relaxed whitespace-pre-line text-left block flex-1 font-medium">{authError}</span>
                   </div>
                 )}
 
-                <form onSubmit={handleGoogleSignIn} className="space-y-4">
+                <form onSubmit={(e) => { e.preventDefault(); handleGoogleSignIn(); }} className="space-y-4">
                   <div className="relative group">
                     <input 
                       type="email" 
@@ -326,7 +384,7 @@ export default function App() {
                     <input 
                       type="password" 
                       placeholder="Password (for demo, sign in with Google below)"
-                      className="w-full bg-[#161616]/90 border border-neutral-700 focus:border-white text-white rounded px-4 py-3 text-sm focus:outline-none transition-colors"
+                      className="w-full bg-[#161616]/90 border border-neutral-700 focus:border-white text-white rounded px-4 py-3 text-sm focus:outline-none transition-colors opacity-60"
                       disabled
                     />
                   </div>
@@ -336,7 +394,7 @@ export default function App() {
                     onClick={handleGoogleSignIn}
                     className="w-full bg-[#E50914] hover:bg-[#C11119] text-white font-semibold py-3.5 rounded text-sm transition-all shadow-lg active:scale-[0.99] cursor-pointer"
                   >
-                    Legacy Sign In (Sandbox Mode)
+                    Sign In with Google (Popup)
                   </button>
 
                   <div className="text-center text-xs text-neutral-400 py-1 font-medium">OR</div>
@@ -344,8 +402,7 @@ export default function App() {
                   {/* HIGH VALUE SECURE INSTANT AUTHENTICATION ACCESS */}
                   <button
                     type="button"
-                    id="landing-google-signin-top"
-                    onClick={handleGoogleSignIn}
+                    onClick={handleGoogleSignInRedirect}
                     className="w-full bg-white text-neutral-900 hover:bg-neutral-100 font-bold py-3 px-4 rounded text-sm transition-all shadow flex items-center justify-center gap-2.5 active:scale-[0.99] cursor-pointer"
                   >
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
@@ -354,7 +411,7 @@ export default function App() {
                       <path d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.84z" fill="#FBBC05"/>
                       <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
                     </svg>
-                    Continue with Google
+                    Continue with Google (Redirect Fallback)
                   </button>
                 </form>
 
