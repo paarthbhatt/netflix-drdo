@@ -1,0 +1,97 @@
+{
+  "entities": {
+    "userAccount": {
+      "title": "User Account",
+      "description": "Private details of a user including billing structure and active subscription tier.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "The unique user ID matching their Firebase Authentication ID."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Private user email address associated with the account."
+        },
+        "subscribed": {
+          "type": "boolean",
+          "description": "Indicates if the user has an active, paid billing subscription."
+        },
+        "plan": {
+          "type": "string",
+          "enum": ["Mobile", "Standard", "Premium"],
+          "description": "The subscribed pricing tier name."
+        },
+        "billingCycle": {
+          "type": "string",
+          "enum": ["monthly", "yearly"],
+          "description": "Billing cycle, monthly or yearly billing."
+        },
+        "nextPaymentDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The next scheduled recurring billing charge date."
+        },
+        "cardLast4": {
+          "type": "string",
+          "description": "The last four digits of the user's payment card stored in the vault."
+        },
+        "cardBrand": {
+          "type": "string",
+          "description": "The card brand name, e.g., Visa, Mastercard."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "canceled", "paused"],
+          "description": "Current status of the subscription."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the user account was first created."
+        }
+      },
+      "required": ["uid", "email", "subscribed", "status", "createdAt"]
+    },
+    "viewerProfile": {
+      "title": "Viewer Profile",
+      "description": "A customized movie viewer sub-profile under a user account, like Netflix's viewer profiles.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Display name of the viewer profile, e.g., Dad, Kids."
+        },
+        "avatar": {
+          "type": "string",
+          "description": "Hex color code or URL representing the viewer's custom avatar."
+        },
+        "isKids": {
+          "type": "boolean",
+          "description": "Flag enabling standard parental guidance filters and restricted titles."
+        },
+        "watchlist": {
+          "type": "array",
+          "description": "List of movie ID strings bookmarked to the user's watchlist."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when this profile was added."
+        }
+      },
+      "required": ["name", "avatar", "isKids", "watchlist", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "userAccount",
+      "description": "Root private user settings and billing structure. Accessed only by owners."
+    },
+    "/users/{userId}/profiles/{profileId}": {
+      "schema": "viewerProfile",
+      "description": "Viewer subprograms configured for custom watchlist and streaming preferences."
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Netflix Clone",
+  "description": "A high-fidelity clone of Netflix featuring secure Google Authentication, a multi-profile select selector, dynamic watchlist sync via Firebase Firestore, an interactive media player, and a subscription billing payment paywall.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
