@@ -466,7 +466,7 @@ export default function App() {
             <div 
               className="relative w-full min-h-[660px] md:min-h-[760px] border-b-8 border-[#232323] flex flex-col justify-between overflow-hidden"
               style={{
-                backgroundImage: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.9) 100%), url("/src/assets/images/netflix_collage_bg_1781265016732.jpg")',
+                backgroundImage: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.9) 100%), url("/src/assets/images/bg.jpg")',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
               }}
