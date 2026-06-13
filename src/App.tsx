@@ -58,6 +58,16 @@ export default function App() {
   const [faqOpenIndex, setFaqOpenIndex] = useState<number | null>(null);
   const [emailInput, setEmailInput] = useState('');
 
+  // Expose subscription state updater globally for sandbox client-side injection demo
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      (window as any).auditState = {
+        setUserAccount,
+        userAccount
+      };
+    }
+  }, [userAccount]);
+
   // Comprehensive Auth Error Handler with specific instructions for Vercel & Firebase console setup
   const handleAuthError = (err: any) => {
     console.error('Google Auth Failed with error details:', err);
