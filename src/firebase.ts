@@ -7,10 +7,6 @@ const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId); /* CRITICAL: The app will break without this line */
 export const auth = getAuth();
 
-// Expose Firestore instance globally for security audit sandbox
-if (typeof window !== 'undefined') {
-  (window as any).db = db;
-}
 
 
 // --- Mandatory Firestore Error Handler ---

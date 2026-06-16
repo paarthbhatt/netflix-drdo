@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import { Check, CreditCard, ShieldCheck, Loader2, Terminal, Cpu, AlertTriangle, Unlock } from 'lucide-react';
-import { auth, db, handleFirestoreError, OperationType } from '../firebase';
-import { doc, setDoc } from 'firebase/firestore';
+import { Check, CreditCard, ShieldCheck, Loader2 } from 'lucide-react';
 import { UserAccount } from '../types';
 
 interface SubscriptionPaywallProps {
-  onSubscriptionSuccess: (account: UserAccount) => void;
   userEmail: string;
+  userAccount: UserAccount | null;
 }
 
 type PlanType = 'Mobile' | 'Standard' | 'Premium';
@@ -36,7 +34,7 @@ const PLANS = {
   },
 };
 
-export default function SubscriptionPaywall({ onSubscriptionSuccess, userEmail }: SubscriptionPaywallProps) {
+export default function SubscriptionPaywall({ userEmail }: SubscriptionPaywallProps) {
   const [selectedPlan, setSelectedPlan] = useState<PlanType>('Standard');
   const [billingCycle, setBillingCycle] = useState<CycleType>('monthly');
   const [step, setStep] = useState<1 | 2>(1); // 1: Choose Plan, 2: Credit Card Checkout
@@ -51,82 +49,6 @@ export default function SubscriptionPaywall({ onSubscriptionSuccess, userEmail }
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  // DRDO Cybersecurity Lab Sandbox states
-  const [showSandbox, setShowSandbox] = useState(false);
-  const [sandboxLog, setSandboxLog] = useState<string[]>([]);
-
-  const addSandboxLog = (msg: string) => {
-    setSandboxLog((prev) => [`[${new Date().toLocaleTimeString()}] ${msg}`, ...prev]);
-  };
-
-  const simulateStateTampering = () => {
-    const user = auth.currentUser;
-    if (!user) {
-      addSandboxLog('EXPLOIT ERROR: User session not found. Authenticate first.');
-      return;
-    }
-    
-    addSandboxLog('EXPLOIT [CWE-639 / Insecure Client-Side Logic]: Initiating entitlement state tampering...');
-    addSandboxLog('Overriding React Context local states in user browser tab...');
-    addSandboxLog('Setting local variable "subscribed" to true to bypass client routing paywall blocks...');
-
-    const bypassedAccount: UserAccount = {
-      uid: user.uid,
-      email: user.email || userEmail,
-      subscribed: true,
-      plan: 'Premium',
-      billingCycle: 'yearly',
-      nextPaymentDate: new Date(Date.now() + 86400000 * 365).toISOString(),
-      cardLast4: '0000',
-      cardBrand: 'Bypassed Mem',
-      status: 'active',
-      createdAt: new Date().toISOString(),
-    };
-
-    addSandboxLog('SUCCESS: Local react-state tree modified. Access unlocked inside active memory tab.');
-    setTimeout(() => {
-      onSubscriptionSuccess(bypassedAccount);
-    }, 1500);
-  };
-
-  const simulateDatabaseBypass = async () => {
-    const user = auth.currentUser;
-    if (!user) {
-      addSandboxLog('EXPLOIT ERROR: User session not found. Authenticate first.');
-      return;
-    }
-
-    addSandboxLog('EXPLOIT [Insecure direct client-write write]: Attempting direct Firestore database injection...');
-    addSandboxLog('Bypassing standard payment provider (Stripe/Paypal API checkout controllers)...');
-    addSandboxLog('Pushing client-forged premium entitlement payload directly to "users/' + user.uid + '" collection...');
-    setIsSubmitting(true);
-
-    try {
-      const bypassedAccount: UserAccount = {
-        uid: user.uid,
-        email: user.email || userEmail,
-        subscribed: true,
-        plan: 'Premium',
-        billingCycle: 'monthly',
-        nextPaymentDate: new Date(Date.now() + 86400000 * 30).toISOString(),
-        cardLast4: '1337',
-        cardBrand: 'DRDO Lab Exploit',
-        status: 'active',
-        createdAt: new Date().toISOString(),
-      };
-
-      await setDoc(doc(db, 'users', user.uid), bypassedAccount);
-      addSandboxLog('SUCCESS: Direct Firestore injection successful. Account registered as persistent subscriber!');
-      
-      setTimeout(() => {
-        onSubscriptionSuccess(bypassedAccount);
-      }, 1000);
-    } catch (err: any) {
-      addSandboxLog(`EXPLOIT FAILED: Access-control check blocked client direct-write: ${err.message}`);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   const formatCardNumber = (value: string) => {
     const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
@@ -166,76 +88,7 @@ export default function SubscriptionPaywall({ onSubscriptionSuccess, userEmail }
 
   const handleCheckoutSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorMsg('');
-
-    // Pre-validating inputs
-    const rawCardString = cardNumber.replace(/\s+/g, '');
-    if (rawCardString.length < 15 || rawCardString.length > 16) {
-      setErrorMsg('Please enter a valid 15 or 16-digit credit card number.');
-      return;
-    }
-    if (!cardExpiry.includes('/') || cardExpiry.length < 5) {
-      setErrorMsg('Please enter a valid expiry date in MM/YY format.');
-      return;
-    }
-    if (cardCvv.length < 3) {
-      setErrorMsg('Please enter a valid CVV code.');
-      return;
-    }
-    if (cardName.trim().length === 0) {
-      setErrorMsg('Please enter the name on the card.');
-      return;
-    }
-
-    const user = auth.currentUser;
-    if (!user) {
-      setErrorMsg('Session expired. Please re-authenticate.');
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      // Simulate Stripe/Gateway processing delay
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      const nextPaymentDate = new Date();
-      nextPaymentDate.setMonth(nextPaymentDate.getMonth() + (billingCycle === 'monthly' ? 1 : 12));
-
-      // Construct verified account model
-      const accountData: UserAccount = {
-        uid: user.uid,
-        email: user.email || userEmail,
-        subscribed: true,
-        plan: selectedPlan,
-        billingCycle,
-        nextPaymentDate: nextPaymentDate.toISOString(),
-        cardLast4: rawCardString.slice(-4),
-        cardBrand: getCardBrand(rawCardString),
-        status: 'active',
-        createdAt: new Date().toISOString(),
-      };
-
-      // Write user details securely to Firestore
-      await setDoc(doc(db, 'users', user.uid), accountData);
-
-      onSubscriptionSuccess(accountData);
-    } catch (err) {
-      try {
-        handleFirestoreError(err, OperationType.WRITE, `users/${user?.uid}`);
-      } catch (adaptedError: any) {
-        setErrorMsg(adaptedError.message || 'Payment processing failed. Please try again.');
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const getCardBrand = (num: string): string => {
-    if (num.startsWith('4')) return 'Visa';
-    if (/^5[1-5]/.test(num)) return 'Mastercard';
-    if (/^3[47]/.test(num)) return 'American Express';
-    return 'Credit Card';
+    setErrorMsg('Subscription provisioning is handled by a trusted backend workflow.');
   };
 
   const planPrice = PLANS[selectedPlan][billingCycle];
@@ -479,55 +332,16 @@ export default function SubscriptionPaywall({ onSubscriptionSuccess, userEmail }
         )}
       </div>
 
-      {/* DRDO/Educational Cybersecurity Vulnerability Analyst Demonstration Tool */}
-      <div className="w-full max-w-lg mt-6 bg-[#0c0c0c] border border-dashed border-red-900/50 rounded-xl p-5 shadow-lg relative overflow-hidden text-neutral-300">
-        <div className="absolute top-0 right-0 bg-red-950/40 text-red-400 text-[9px] font-mono border-l border-b border-red-900/50 uppercase px-2 py-0.5 tracking-wider">
-          Internship Lab Sandbox
-        </div>
+      <div className="w-full max-w-lg mt-6 bg-[#0c0c0c] border border-neutral-800 rounded-xl p-5 shadow-lg text-neutral-300">
         <div className="flex items-center gap-2 mb-3">
-          <Terminal className="w-5 h-5 text-red-500" />
+          <ShieldCheck className="w-5 h-5 text-green-400" />
           <h2 className="text-sm font-extrabold text-white font-mono uppercase tracking-wider">
-            Entitlement Penetration Audit
+            Trusted Entitlement Workflow
           </h2>
         </div>
-        <p className="text-xs text-neutral-400 mb-4 leading-relaxed font-sans">
-          This panel demonstrates structural vulnerabilities where subscriptions operate purely on client-side state hooks or over-permissive cloud rules (direct collection bypass).
+        <p className="text-xs text-neutral-400 leading-relaxed font-sans">
+          Subscription status is now read-only on the client. Entitlements must come from Firestore data validated by backend policy, and direct browser writes are disabled.
         </p>
-
-        <div className="flex flex-col gap-2.5">
-          <button
-            id="exploit-client-state-btn"
-            type="button"
-            onClick={simulateStateTampering}
-            className="w-full bg-red-950/30 hover:bg-red-950/50 border border-red-900/40 font-mono text-xs font-semibold py-2.5 px-3 rounded text-red-400 flex items-center justify-between transition-colors cursor-pointer"
-          >
-            <span>[Exploit-1] Memory State Injection (CWE-639)</span>
-            <Cpu className="w-4 h-4 ml-2" />
-          </button>
-          <button
-            id="exploit-db-direct-btn"
-            type="button"
-            onClick={simulateDatabaseBypass}
-            disabled={isSubmitting}
-            className="w-full bg-red-950/30 hover:bg-red-950/50 border border-red-900/40 font-mono text-xs font-semibold py-2.5 px-3 rounded text-red-400 flex items-center justify-between transition-colors cursor-pointer disabled:opacity-40"
-          >
-            <span>[Exploit-2] Direct DB Write Injection (Bypass Gateway)</span>
-            <Unlock className="w-4 h-4 ml-2" />
-          </button>
-        </div>
-
-        {sandboxLog.length > 0 && (
-          <div className="mt-4 p-3 bg-black border border-neutral-800 rounded font-mono text-[10px] text-green-400 space-y-1.5 max-h-36 overflow-y-auto scrollbar-none">
-            <div className="text-neutral-500 select-none border-b border-neutral-900 pb-1 mb-1 font-bold">
-              SIMULATOR STACATRACE LOGS:
-            </div>
-            {sandboxLog.map((log, idx) => (
-              <div key={idx} className="leading-normal break-words">
-                {log}
-              </div>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );

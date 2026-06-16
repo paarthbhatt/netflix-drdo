@@ -7,7 +7,6 @@ import { doc, updateDoc } from 'firebase/firestore';
 interface ManageAccountModalProps {
   account: UserAccount;
   onClose: () => void;
-  onUpdateAccount: (updated: UserAccount) => void;
 }
 
 const TIER_PRICES = {
@@ -16,7 +15,7 @@ const TIER_PRICES = {
   Premium: { monthly: 22.99, yearly: 219.99 },
 };
 
-export default function ManageAccountModal({ account, onClose, onUpdateAccount }: ManageAccountModalProps) {
+export default function ManageAccountModal({ account, onClose }: ManageAccountModalProps) {
   const [activeTab, setActiveTab] = useState<'membership' | 'billing'>('membership');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -51,132 +50,16 @@ export default function ManageAccountModal({ account, onClose, onUpdateAccount }
 
   const handleUpdateCardSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorMsg('');
-    setSuccessMsg('');
-
-    const rawCardString = newCardNumber.replace(/\s+/g, '');
-    if (rawCardString.length < 15 || rawCardString.length > 16) {
-      setErrorMsg('Please enter a valid 15 or 16-digit credit card number.');
-      return;
-    }
-    if (newCardExpiry.length < 5 || !newCardExpiry.includes('/')) {
-      setErrorMsg('Please enter a valid expiry date MM/YY.');
-      return;
-    }
-    if (newCardCvv.length < 3) {
-      setErrorMsg('Please double check your CVV security code.');
-      return;
-    }
-
-    setIsSubmitting(true);
-    const path = `users/${account.uid}`;
-
-    try {
-      await new Promise((r) => setTimeout(r, 1500));
-
-      const updatedAccount: UserAccount = {
-        ...account,
-        cardLast4: rawCardString.slice(-4),
-        cardBrand: rawCardString.startsWith('4') ? 'Visa' : 'Mastercard',
-      };
-
-      await updateDoc(doc(db, 'users', account.uid), {
-        cardLast4: updatedAccount.cardLast4,
-        cardBrand: updatedAccount.cardBrand,
-      });
-
-      onUpdateAccount(updatedAccount);
-      setSuccessMsg('Payment credit card updated successfully!');
-      setIsUpdatingCard(false);
-      setNewCardNumber('');
-      setNewCardExpiry('');
-      setNewCardCvv('');
-    } catch (err) {
-      try {
-        handleFirestoreError(err, OperationType.UPDATE, path);
-      } catch (adaptedError: any) {
-        setErrorMsg('Failed to update credit card state.');
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
+    setErrorMsg('Payment instrument changes must be processed by a trusted backend workflow.');
   };
 
   const handleTierChangeSubmit = async () => {
-    setErrorMsg('');
-    setSuccessMsg('');
-    setIsSubmitting(true);
-    const path = `users/${account.uid}`;
-
-    try {
-      await new Promise((r) => setTimeout(r, 1500));
-
-      const updatedAccount: UserAccount = {
-        ...account,
-        plan: targetPlan,
-      };
-
-      await updateDoc(doc(db, 'users', account.uid), {
-        plan: targetPlan,
-      });
-
-      onUpdateAccount(updatedAccount);
-      setSuccessMsg(`Plan tier successfully adjusted to ${targetPlan}!`);
-      setIsChangingPlan(false);
-    } catch (err) {
-      try {
-        handleFirestoreError(err, OperationType.UPDATE, path);
-      } catch (adaptedError: any) {
-        setErrorMsg('Failed to change subscription plan tier.');
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
+    setErrorMsg('Plan changes are managed by the billing service and cannot be changed locally.');
   };
 
   const handleStatusToggle = async (nextStatus: 'active' | 'canceled' | 'paused') => {
-    setErrorMsg('');
-    setSuccessMsg('');
-    
-    const confirmMsg = nextStatus === 'canceled' 
-      ? 'Are you sure you want to cancel renewals? You will retain access until the end of this billing cycle.'
-      : nextStatus === 'paused' 
-      ? 'Do you want to temporarily pause your subscription?'
-      : 'Resume billing renewals?';
-    
-    if (!window.confirm(confirmMsg)) return;
-
-    setIsSubmitting(true);
-    const path = `users/${account.uid}`;
-
-    try {
-      await new Promise((r) => setTimeout(r, 1000));
-
-      // If resuming, make sure subscribed is true
-      const isSub = nextStatus === 'active';
-
-      await updateDoc(doc(db, 'users', account.uid), {
-        status: nextStatus,
-        subscribed: isSub,
-      });
-
-      const updatedAccount: UserAccount = {
-        ...account,
-        status: nextStatus,
-        subscribed: isSub,
-      };
-
-      onUpdateAccount(updatedAccount);
-      setSuccessMsg(`Subscription is now toggled to ${nextStatus}!`);
-    } catch (err) {
-      try {
-        handleFirestoreError(err, OperationType.UPDATE, path);
-      } catch (adaptedError: any) {
-        setErrorMsg('Failed to change billing status.');
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
+    void nextStatus;
+    setErrorMsg('Subscription status is controlled server-side and cannot be toggled locally.');
   };
 
   const cyclePrice = account.plan ? TIER_PRICES[account.plan][account.billingCycle || 'monthly'] : 0;
@@ -318,14 +201,14 @@ export default function ManageAccountModal({ account, onClose, onUpdateAccount }
                       <div className="space-y-4 bg-neutral-950 p-4 rounded-lg border border-neutral-800">
                         <h4 className="font-bold text-sm text-white">Adjust Subscription Tier</h4>
                         <div className="space-y-2">
-                          {['Mobile', 'Standard', 'Premium'].map((t) => (
+                          {(['Mobile', 'Standard', 'Premium'] as const).map((t) => (
                             <label key={t} className="flex items-center gap-2.5 text-xs text-neutral-300 cursor-pointer">
                               <input
                                 id={`upgrade-option-${t.toLowerCase()}`}
                                 type="radio"
                                 name="plan-tier"
                                 checked={targetPlan === t}
-                                onChange={() => setTargetPlan(t as any)}
+                                onChange={() => setTargetPlan(t)}
                                 className="accent-red-600 cursor-pointer"
                               />
                               <span className="font-semibold text-white">{t} Plan</span>

@@ -27,6 +27,7 @@ import MovieRow from './components/MovieRow';
 import MovieDetailsModal from './components/MovieDetailsModal';
 import VideoPlayer from './components/VideoPlayer';
 import ManageAccountModal from './components/ManageAccountModal';
+import { hasActiveSubscription, isValidUserAccountSnapshot } from './authz';
 
 // Icons
 import { Loader2, Film, ShieldAlert, CheckCircle2, Tv, Play, ChevronLeft, ChevronRight, HelpCircle, Plus, Minus, ChevronDown, ChevronUp, Globe, X, Smartphone, Sparkles, Smile, ArrowDownCircle } from 'lucide-react';
@@ -58,21 +59,11 @@ export default function App() {
   const [faqOpenIndex, setFaqOpenIndex] = useState<number | null>(null);
   const [emailInput, setEmailInput] = useState('');
 
-  // Expose subscription state updater globally for sandbox client-side injection demo
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      (window as any).auditState = {
-        setUserAccount,
-        userAccount
-      };
-    }
-  }, [userAccount]);
-
   // Comprehensive Auth Error Handler with specific instructions for Vercel & Firebase console setup
-  const handleAuthError = (err: any) => {
-    console.error('Google Auth Failed with error details:', err);
-    const code = err?.code || '';
-    const message = err?.message || '';
+  const handleAuthError = (err: unknown) => {
+    const error = err as { code?: string; message?: string } | null;
+    const code = error?.code || '';
+    const message = error?.message || 'Unknown authentication error';
 
     if (code === 'auth/unauthorized-domain') {
       const currentDomain = window.location.hostname;
@@ -103,16 +94,16 @@ export default function App() {
   useEffect(() => {
     // Graceful redirect results parser
     getRedirectResult(auth)
-      .then((result) => {
+      .then((result: Awaited<ReturnType<typeof getRedirectResult>>) => {
         if (result && result.user) {
-          console.log('Redirect Sign-in successfully recognized: ', result.user);
+          void result.user;
         }
       })
       .catch((err: any) => {
         handleAuthError(err);
       });
 
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser: FirebaseUser | null) => {
       setUser(currentUser);
       setAuthError('');
 
@@ -122,19 +113,8 @@ export default function App() {
         try {
           const docSnap = await getDoc(doc(db, 'users', currentUser.uid));
           if (docSnap.exists()) {
-            const data = docSnap.data();
-            setUserAccount({
-              uid: data.uid,
-              email: data.email,
-              subscribed: data.subscribed,
-              plan: data.plan,
-              billingCycle: data.billingCycle,
-              nextPaymentDate: data.nextPaymentDate,
-              cardLast4: data.cardLast4,
-              cardBrand: data.cardBrand,
-              status: data.status,
-              createdAt: data.createdAt,
-            });
+            const account = isValidUserAccountSnapshot(docSnap.data());
+            setUserAccount(account);
           } else {
             setUserAccount(null);
           }
@@ -194,10 +174,6 @@ export default function App() {
     }
   };
 
-  const handleSubscriptionSuccess = (account: UserAccount) => {
-    setUserAccount(account);
-  };
-
   const handleSelectProfile = (profile: ViewerProfile) => {
     setActiveProfile(profile);
     setActiveTab('home');
@@ -209,17 +185,13 @@ export default function App() {
     setSearchQuery('');
   };
 
-  const handleUpdateAccount = (updatedAccount: UserAccount) => {
-    setUserAccount(updatedAccount);
-  };
-
   // Sync profile watchlist adjustments in Firestore
   const handleToggleWatchlist = async (movieId: string) => {
     if (!user || !activeProfile) return;
 
     const isBookmarked = activeProfile.watchlist?.includes(movieId);
     const updatedWatchlist = isBookmarked
-      ? activeProfile.watchlist.filter((id) => id !== movieId)
+      ? activeProfile.watchlist.filter((id: string) => id !== movieId)
       : [...activeProfile.watchlist, movieId];
 
     const path = `users/${user.uid}/profiles/${activeProfile.id}`;
@@ -913,11 +885,11 @@ export default function App() {
   }
 
   // --- RENDERING ROUTINE B: Authenticated but Unsubscribed (Paywall) ---
-  if (!userAccount || !userAccount.subscribed) {
+  if (!hasActiveSubscription(userAccount)) {
     return (
       <SubscriptionPaywall 
-        onSubscriptionSuccess={handleSubscriptionSuccess}
         userEmail={user.email || ''}
+        userAccount={userAccount}
       />
     );
   }
@@ -1108,7 +1080,6 @@ export default function App() {
         <ManageAccountModal 
           account={userAccount}
           onClose={() => setShowBillingPortal(false)}
-          onUpdateAccount={handleUpdateAccount}
         />
       )}
     </div>

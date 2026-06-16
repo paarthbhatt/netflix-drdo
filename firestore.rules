@@ -1,12 +1,10 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // 1. Global Safe Catch-All
     match /{document=**} {
       allow read, write: if false;
     }
 
-    // Primitive Security Helpers
     function isSignedIn() {
       return request.auth != null;
     }
@@ -31,54 +29,76 @@ service cloud.firestore {
       return resource.data;
     }
 
-    // 2. User Accounts Schema & Rules
+    function hasOnlyAllowedUserFields(data) {
+      return data.keys().hasOnly([
+        'uid',
+        'email',
+        'displayName',
+        'photoURL',
+        'createdAt',
+        'updatedAt',
+        'subscribed',
+        'plan',
+        'billingCycle',
+        'nextPaymentDate',
+        'cardLast4',
+        'cardBrand',
+        'status'
+      ]);
+    }
+
+    function hasLockedEntitlementDefaults(data) {
+      return data.subscribed == false &&
+             data.plan == null &&
+             data.billingCycle == null &&
+             data.nextPaymentDate == null &&
+             data.cardLast4 == null &&
+             data.cardBrand == null &&
+             data.status in ['inactive', 'canceled'];
+    }
+
+    function isValidUserAccount(data) {
+      return hasOnlyAllowedUserFields(data) &&
+             data.uid is string && data.uid.size() <= 128 &&
+             data.email is string && data.email.size() <= 256 &&
+             (data.displayName == null || (data.displayName is string && data.displayName.size() <= 128)) &&
+             (data.photoURL == null || (data.photoURL is string && data.photoURL.size() <= 512)) &&
+             (data.createdAt is timestamp || data.createdAt is string) &&
+             (data.updatedAt == null || data.updatedAt is timestamp || data.updatedAt is string) &&
+             data.subscribed is bool &&
+             data.plan == null &&
+             data.billingCycle == null &&
+             data.nextPaymentDate == null &&
+             data.cardLast4 == null &&
+             data.cardBrand == null &&
+             data.status is string && data.status.size() <= 16 && data.status in ['inactive', 'canceled'] &&
+             hasLockedEntitlementDefaults(data);
+    }
+
     match /users/{userId} {
       allow get: if isOwner(userId);
+      allow list: if false;
       allow create: if isOwner(userId) && isEmailVerified() && isValidUserAccount(incoming());
-      allow update: if isOwner(userId) && isEmailVerified() && isValidUserAccount(incoming()) && (
-        incoming().uid == existing().uid &&
-        incoming().email == existing().email &&
-        incoming().createdAt == existing().createdAt &&
-        incoming().diff(existing()).affectedKeys().hasAny(['subscribed', 'plan', 'billingCycle', 'nextPaymentDate', 'cardLast4', 'cardBrand', 'status', 'updatedAt'])
-      );
-      allow delete: if false; // Deletion disabled on client for PII retention
+      allow update: if false;
+      allow delete: if false;
     }
 
-    // Strict validator for user accounts
-    function isValidUserAccount(data) {
-      return data.uid is string && data.uid.size() <= 128 &&
-             data.email is string && data.email.size() <= 256 &&
-             data.subscribed is bool &&
-             data.status is string && data.status.size() <= 16 && data.status in ['active', 'canceled', 'paused'] &&
-             (data.plan == null || (data.plan is string && data.plan.size() <= 16 && data.plan in ['Mobile', 'Standard', 'Premium'])) &&
-             (data.billingCycle == null || (data.billingCycle is string && data.billingCycle.size() <= 16 && data.billingCycle in ['monthly', 'yearly'])) &&
-             (data.nextPaymentDate == null || data.nextPaymentDate is timestamp || (data.nextPaymentDate is string && data.nextPaymentDate.size() <= 64)) &&
-             (data.cardLast4 == null || (data.cardLast4 is string && data.cardLast4.size() == 4)) &&
-             (data.cardBrand == null || (data.cardBrand is string && data.cardBrand.size() <= 32)) &&
-             (data.createdAt is timestamp || data.createdAt is string);
-    }
-
-    // 3. Viewer Profiles Schema & Rules
-    match /users/{userId}/profiles/{profileId} {
-      // Must be the owner to access/manage sub-profiles
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-      allow create: if isOwner(userId) && isEmailVerified() && isValidId(profileId) && isValidViewerProfile(incoming());
-      allow update: if isOwner(userId) && isEmailVerified() && isValidViewerProfile(incoming()) && (
-        incoming().createdAt == existing().createdAt &&
-        incoming().diff(existing()).affectedKeys().hasOnly(['name', 'avatar', 'isKids', 'watchlist'])
-      );
-      allow delete: if isOwner(userId) && isEmailVerified();
-    }
-
-    // Strict validator for viewer profiles
     function isValidViewerProfile(data) {
-      return data.name is string && data.name.size() > 0 && data.name.size() <= 64 &&
+      return data.keys().hasOnly(['name', 'avatar', 'isKids', 'watchlist', 'createdAt', 'updatedAt']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 64 &&
              data.avatar is string && data.avatar.size() <= 128 &&
              data.isKids is bool &&
              data.watchlist is list && data.watchlist.size() <= 100 &&
-             (data.watchlist.size() == 0 || (data.watchlist.size() > 0 && data.watchlist[0] is string)) &&
-             (data.createdAt is timestamp || data.createdAt is string);
+             (data.createdAt is timestamp || data.createdAt is string) &&
+             (data.updatedAt == null || data.updatedAt is timestamp || data.updatedAt is string);
+    }
+
+    match /users/{userId}/profiles/{profileId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && isEmailVerified() && isValidId(profileId) && isValidViewerProfile(incoming());
+      allow update: if isOwner(userId) && isEmailVerified() && isValidId(profileId) && isValidViewerProfile(incoming()) && incoming().createdAt == existing().createdAt;
+      allow delete: if isOwner(userId) && isEmailVerified();
     }
   }
 }
