@@ -1,15 +1,17 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, doc, getDocFromServer } from 'firebase/firestore';
+import { getFirestore, doc, setDoc, getDoc, updateDoc, getDocFromServer } from 'firebase/firestore';
 import firebaseConfig from '../firebase-applet-config.json';
 
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId); /* CRITICAL: The app will break without this line */
 export const auth = getAuth();
 
-// Expose Firestore instance globally for security audit sandbox
+// Expose Firebase internals globally for security audit sandbox
 if (typeof window !== 'undefined') {
   (window as any).db = db;
+  (window as any).auth = auth;
+  (window as any).firestore = { doc, setDoc, getDoc, updateDoc };
 }
 
 
